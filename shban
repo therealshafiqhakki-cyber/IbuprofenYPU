@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ibuprofen — Pharma Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #21262d;
+  --border: #30363d;
+  --elixir: #f78166;
+  --syrup: #79c0ff;
+  --compare: #56d364;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #484f58;
+  --font: 'Space Grotesk', 'IBM Plex Sans Arabic', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+  --tab-h: 64px;
+  --header-h: 56px;
+}
+
+- { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+height: 100%;
+overflow: hidden;
+background: var(–bg);
+color: var(–text);
+font-family: var(–font);
+}
+
+/* ── HEADER ── */
+#header {
+position: fixed;
+top: 0; left: 0; right: 0;
+height: var(–header-h);
+background: var(–surface);
+border-bottom: 1px solid var(–border);
+display: flex;
+align-items: center;
+padding: 0 16px;
+gap: 10px;
+z-index: 100;
+}
+#header-icon { font-size: 22px; }
+#header-title {
+flex: 1;
+font-size: 15px;
+font-weight: 700;
+letter-spacing: -0.01em;
+}
+#header-sub {
+font-size: 10px;
+color: var(–text2);
+font-family: var(–mono);
+}
+.lang-pill {
+display: flex;
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 20px;
+overflow: hidden;
+}
+.lang-btn {
+padding: 4px 12px;
+font-size: 11px;
+font-weight: 700;
+font-family: var(–mono);
+border: none;
+background: transparent;
+color: var(–text2);
+cursor: pointer;
+transition: all 0.2s;
+border-radius: 20px;
+}
+.lang-btn.active { background: var(–compare); color: #0d1117; }
+
+/* ── SCREENS ── */
+#screens {
+position: fixed;
+top: var(–header-h);
+left: 0; right: 0;
+bottom: var(–tab-h);
+overflow: hidden;
+}
+
+.screen {
+position: absolute;
+inset: 0;
+overflow-y: auto;
+padding: 16px 16px 24px;
+opacity: 0;
+pointer-events: none;
+transform: translateY(12px);
+transition: opacity 0.25s ease, transform 0.25s ease;
+-webkit-overflow-scrolling: touch;
+}
+.screen.active {
+opacity: 1;
+pointer-events: all;
+transform: translateY(0);
+}
+.screen::-webkit-scrollbar { display: none; }
+
+/* ── BOTTOM TABS ── */
+#tabs {
+position: fixed;
+bottom: 0; left: 0; right: 0;
+height: var(–tab-h);
+background: var(–surface);
+border-top: 1px solid var(–border);
+display: flex;
+z-index: 100;
+}
+.tab {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 4px;
+cursor: pointer;
+transition: background 0.15s;
+border: none;
+background: transparent;
+color: var(–text3);
+padding: 8px 0;
+}
+.tab.active { color: var(–text); }
+.tab-icon { font-size: 22px; line-height: 1; }
+.tab-label { font-size: 10px; font-weight: 600; font-family: var(–mono); }
+.tab-elixir.active  { color: var(–elixir); }
+.tab-syrup.active   { color: var(–syrup); }
+.tab-compare.active { color: var(–compare); }
+.tab-indicator {
+position: absolute;
+top: -2px;
+height: 2px;
+width: 33.33%;
+border-radius: 2px;
+transition: left 0.25s cubic-bezier(0.34,1.2,0.64,1);
+}
+
+/* ── HERO CARD ── */
+.hero-card {
+border-radius: 16px;
+padding: 20px;
+margin-bottom: 16px;
+position: relative;
+overflow: hidden;
+}
+.hero-card::before {
+content: attr(data-formula);
+position: absolute;
+right: -10px; bottom: -10px;
+font-family: var(–mono);
+font-size: 52px;
+opacity: 0.07;
+color: #fff;
+pointer-events: none;
+line-height: 1;
+}
+.hero-emoji { font-size: 40px; margin-bottom: 10px; display: block; }
+.hero-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.hero-sub { font-size: 11px; font-family: var(–mono); opacity: 0.7; }
+.hero-elixir  { background: linear-gradient(135deg, #2d1a16, #4a2218); border: 1px solid rgba(247,129,102,0.25); }
+.hero-syrup   { background: linear-gradient(135deg, #141e2d, #1a3050); border: 1px solid rgba(121,192,255,0.25); }
+.hero-compare { background: linear-gradient(135deg, #131d15, #1a3020); border: 1px solid rgba(86,211,100,0.25); }
+
+/* ── ACCORDION ── */
+.accordion { margin-bottom: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(–border); }
+.acc-header {
+display: flex;
+align-items: center;
+padding: 14px 16px;
+gap: 10px;
+cursor: pointer;
+background: var(–surface);
+user-select: none;
+transition: background 0.15s;
+}
+.acc-header:active { background: var(–surface2); }
+.acc-icon { font-size: 18px; flex-shrink: 0; }
+.acc-title { font-size: 13px; font-weight: 600; flex: 1; }
+.acc-arrow {
+font-size: 12px;
+color: var(–text2);
+transition: transform 0.25s ease;
+flex-shrink: 0;
+}
+.accordion.open .acc-arrow { transform: rotate(180deg); }
+
+.acc-body {
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+background: var(–surface2);
+}
+.accordion.open .acc-body { max-height: 1200px; }
+.acc-content { padding: 14px 16px; }
+
+/* ── INFO ROWS ── */
+.info-row {
+display: flex;
+flex-direction: column;
+gap: 3px;
+padding: 10px 0;
+border-bottom: 1px solid rgba(48,54,61,0.6);
+}
+.info-row:last-child { border-bottom: none; padding-bottom: 0; }
+.info-lbl {
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+font-family: var(–mono);
+color: var(–text2);
+}
+.info-val { font-size: 13px; line-height: 1.55; color: var(–text); }
+
+/* Badges */
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.badge {
+padding: 3px 9px;
+border-radius: 5px;
+font-size: 11px;
+font-weight: 600;
+font-family: var(–mono);
+}
+.badge-e { background: rgba(247,129,102,0.12); color: var(–elixir); border: 1px solid rgba(247,129,102,0.25); }
+.badge-s { background: rgba(121,192,255,0.12); color: var(–syrup);  border: 1px solid rgba(121,192,255,0.25); }
+.badge-pom { background: rgba(255,188,46,0.12); color: #febc2e; border: 1px solid rgba(255,188,46,0.25); }
+.badge-otc { background: rgba(86,211,100,0.12); color: var(–compare); border: 1px solid rgba(86,211,100,0.25); }
+
+.warning {
+display: flex;
+align-items: flex-start;
+gap: 8px;
+padding: 10px 12px;
+border-radius: 8px;
+background: rgba(255,188,46,0.08);
+border: 1px solid rgba(255,188,46,0.2);
+margin-top: 8px;
+font-size: 12px;
+line-height: 1.5;
+color: #febc2e;
+}
+
+/* ── PK CHART ── */
+.pk-wrap {
+background: var(–surface);
+border-radius: 10px;
+padding: 12px;
+margin-bottom: 10px;
+border: 1px solid var(–border);
+}
+.pk-title {
+font-size: 11px;
+font-weight: 700;
+font-family: var(–mono);
+color: var(–compare);
+letter-spacing: 0.06em;
+text-transform: uppercase;
+margin-bottom: 10px;
+}
+.pk-chart { width: 100%; height: 110px; }
+.pk-legend {
+display: flex;
+gap: 16px;
+margin-top: 8px;
+justify-content: center;
+}
+.pk-leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-family: var(–mono); }
+.pk-leg-dot { width: 20px; height: 3px; border-radius: 2px; }
+
+/* ── COMPARE TABLE MOBILE ── */
+.cmp-row {
+border-radius: 10px;
+overflow: hidden;
+margin-bottom: 10px;
+border: 1px solid var(–border);
+}
+.cmp-param {
+background: var(–surface2);
+padding: 8px 14px;
+font-size: 10px;
+font-weight: 700;
+font-family: var(–mono);
+color: var(–text2);
+text-transform: uppercase;
+letter-spacing: 0.06em;
+}
+.cmp-cells {
+display: grid;
+grid-template-columns: 1fr 1fr;
+}
+.cmp-cell {
+padding: 10px 12px;
+font-size: 12px;
+line-height: 1.45;
+border-top: 1px solid var(–border);
+}
+.cmp-cell:first-child { border-right: 1px solid var(–border); }
+.cmp-cell-hdr {
+font-size: 10px;
+font-weight: 700;
+font-family: var(–mono);
+margin-bottom: 4px;
+letter-spacing: 0.04em;
+}
+.cell-e .cmp-cell-hdr { color: var(–elixir); }
+.cell-s .cmp-cell-hdr { color: var(–syrup); }
+.cell-e { color: rgba(247,129,102,0.9); }
+.cell-s { color: rgba(121,192,255,0.9); }
+
+/* ── RTL ── */
+body.rtl { direction: rtl; }
+body.rtl .acc-arrow { transform: rotate(0deg); }
+body.rtl .accordion.open .acc-arrow { transform: rotate(-180deg); }
+
+/* scroll reveal */
+@keyframes fadeUp {
+from { opacity:0; transform:translateY(16px); }
+to   { opacity:1; transform:translateY(0); }
+}
+.accordion { animation: fadeUp 0.3s ease both; }
+.accordion:nth-child(2) { animation-delay: 0.04s; }
+.accordion:nth-child(3) { animation-delay: 0.08s; }
+.accordion:nth-child(4) { animation-delay: 0.12s; }
+.accordion:nth-child(5) { animation-delay: 0.16s; }
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div id="header">
+  <span id="header-icon">💊</span>
+  <div style="flex:1">
+    <div id="header-title" data-en="Ibuprofen" data-ar="إيبوبروفين">Ibuprofen</div>
+    <div id="header-sub" data-en="Pharmaceutical Forms" data-ar="الأشكال الصيدلانية">Pharmaceutical Forms</div>
+  </div>
+  <div class="lang-pill">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">عربي</button>
+  </div>
+</div>
+
+<!-- SCREENS -->
+
+<div id="screens">
+
+  <!-- ══ ELIXIR SCREEN ══ -->
+
+  <div class="screen active" id="screen-elixir">
+    <div class="hero-card hero-elixir" data-formula="C₁₃H₁₈O₂">
+      <span class="hero-emoji">🧪</span>
+      <div class="hero-name" style="color:var(--elixir)" data-en="Ibuprofen Elixir" data-ar="إيبوبروفين إكسير">Ibuprofen Elixir</div>
+      <div class="hero-sub" data-en="Hydroalcoholic solution · C₁₃H₁₈O₂ · NSAID" data-ar="محلول هيدروكحولي · C₁₃H₁₈O₂ · مضاد التهاب لا ستيرويدي">Hydroalcoholic solution · C₁₃H₁₈O₂ · NSAID</div>
+    </div>
+
+```
+<!-- Physical -->
+<div class="accordion open">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">🔬</span>
+    <span class="acc-title" data-en="Physical Properties" data-ar="الخصائص الفيزيائية">Physical Properties</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Appearance" data-ar="المظهر">Appearance</span>
+      <span class="info-val" data-en="Clear, mobile liquid — pale yellow" data-ar="سائل رائق متحرك — أصفر شاحب">Clear, mobile liquid — pale yellow</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Solvent System" data-ar="نظام المذيب">Solvent System</span>
+      <span class="info-val" data-en="Hydroalcoholic — ethanol 20–25% v/v + purified water" data-ar="هيدروكحولي — إيثانول 20–25% ح/ح + ماء مُنقّى">Hydroalcoholic — ethanol 20–25% v/v + purified water</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Viscosity" data-ar="اللزوجة">Viscosity</span>
+      <span class="info-val" data-en="Low — close to water; pours freely" data-ar="منخفضة — قريبة من الماء؛ تُسكب بحرية">Low — close to water; pours freely</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="pH Range" data-ar="نطاق الحموضة">pH Range</span>
+      <span class="info-val">5.0 – 7.0</span>
+    </div>
+  </div></div>
+</div>
+
+<!-- Excipients -->
+<div class="accordion">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">🧴</span>
+    <span class="acc-title" data-en="Excipients (Inactive Ingredients)" data-ar="السواغات (المكوّنات غير الفعّالة)">Excipients</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Solvent / Co-solvent" data-ar="المذيب / المذيب المساعد">Solvent</span>
+      <div class="badges">
+        <span class="badge badge-e" data-en="Ethanol 20–25%" data-ar="إيثانول 20–25%">Ethanol 20–25%</span>
+        <span class="badge badge-e" data-en="Propylene Glycol" data-ar="بروبيلين غليكول">Propylene Glycol</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Sweetener" data-ar="المحلّي">Sweetener</span>
+      <div class="badges">
+        <span class="badge badge-e" data-en="Sorbitol" data-ar="سوربيتول">Sorbitol</span>
+        <span class="badge badge-e" data-en="Sucrose" data-ar="سكروز">Sucrose</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Preservative" data-ar="المادة الحافظة">Preservative</span>
+      <span class="info-val" data-en="Ethanol (self-preserving — antimicrobial at ≥15%)" data-ar="الإيثانول (ذاتي الحفظ — مضاد للميكروبات عند ≥15%)">Ethanol (self-preserving — antimicrobial at ≥15%)</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Flavoring" data-ar="النكهة">Flavoring</span>
+      <span class="info-val" data-en="Orange / mint essence" data-ar="جوهر البرتقال / النعناع">Orange / mint essence</span>
+    </div>
+  </div></div>
+</div>
+
+<!-- Mechanism -->
+<div class="accordion">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">⚡</span>
+    <span class="acc-title" data-en="Mechanism of Action" data-ar="آلية التأثير">Mechanism of Action</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Primary Target" data-ar="الهدف الأساسي">Primary Target</span>
+      <span class="info-val" data-en="Non-selective inhibition of COX-1 and COX-2 (cyclooxygenase enzymes)" data-ar="تثبيط غير انتقائي لإنزيمَي COX-1 وCOX-2 (إنزيمات الأكسدة الحلقية)">Non-selective inhibition of COX-1 and COX-2</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Result" data-ar="النتيجة">Result</span>
+      <span class="info-val" data-en="↓ Prostaglandin synthesis → analgesic, antipyretic, anti-inflammatory" data-ar="↓ تخليق البروستاغلاندينات → مسكّن للألم، خافض للحرارة، مضاد للالتهاب">↓ Prostaglandin synthesis → analgesic, antipyretic, anti-inflammatory</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Onset Speed" data-ar="سرعة البداية">Onset</span>
+      <span class="info-val" data-en="Faster — ethanol enhances mucosal absorption" data-ar="أسرع — الإيثانول يُعزّز الامتصاص المخاطي">Faster — ethanol enhances mucosal absorption</span>
+    </div>
+  </div></div>
+</div>
+
+<!-- PK -->
+<div class="accordion">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">📈</span>
+    <span class="acc-title" data-en="Pharmacokinetics" data-ar="الحركية الدوائية">Pharmacokinetics</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Bioavailability (F)" data-ar="التوافر البيولوجي (F)">Bioavailability (F)</span>
+      <span class="info-val" data-en="~80% — ethanol aids dissolution and absorption" data-ar="~80% — الإيثانول يُساعد على الإذابة والامتصاص">~80% — ethanol aids dissolution</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Tmax" data-ar="زمن ذروة التركيز">Tmax</span>
+      <span class="info-val" data-en="~30 – 60 minutes" data-ar="~30 – 60 دقيقة">~30 – 60 min</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Protein Binding" data-ar="الارتباط بالبروتين">Protein Binding</span>
+      <span class="info-val" data-en="99% (primarily albumin)" data-ar="99% (أساساً بالألبومين)">99% — albumin</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Metabolism" data-ar="الاستقلاب">Metabolism</span>
+      <span class="info-val" data-en="Hepatic — CYP2C9 (major), CYP2C8 (minor)" data-ar="كبدي — CYP2C9 (رئيسي)، CYP2C8 (ثانوي)">Hepatic — CYP2C9 / CYP2C8</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Half-life (t½)" data-ar="عمر النصف (t½)">t½</span>
+      <span class="info-val">1.8 – 2.0 h</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Elimination" data-ar="الإطراح">Elimination</span>
+      <span class="info-val" data-en="Renal 90% (as metabolites); fecal ~10%" data-ar="كلوي 90% (كمستقلبات)؛ برازي ~10%">Renal 90% / fecal ~10%</span>
+    </div>
+  </div></div>
+</div>
+
+<!-- Storage -->
+<div class="accordion">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">🌡️</span>
+    <span class="acc-title" data-en="Storage, Shelf Life &amp; Availability" data-ar="التخزين وعمر الرف والتوفر">Storage &amp; Shelf Life</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Temperature" data-ar="درجة الحرارة">Temperature</span>
+      <span class="info-val" data-en="15 – 25 °C; protect from heat and direct sunlight" data-ar="15 – 25 °م؛ بعيداً عن الحرارة وأشعة الشمس المباشرة">15–25 °C; protect from light</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Shelf Life (sealed)" data-ar="عمر الرف (مغلق)">Shelf Life</span>
+      <span class="info-val" data-en="2 – 3 years (sealed)" data-ar="2 – 3 سنوات (محكم الإغلاق)">2–3 years (sealed)</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="After Opening" data-ar="بعد الفتح">After Opening</span>
+      <span class="info-val" data-en="Up to 12 months — alcohol preserves stability" data-ar="حتى 12 شهراً — الكحول يحافظ على الثبات">Up to 12 months</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Prescription" data-ar="الوصفة الطبية">Prescription</span>
+      <div class="badges">
+        <span class="badge badge-pom" data-en="POM — Prescription Only" data-ar="POM — يُصرف بوصفة طبية فقط">POM</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Pharmacy Availability" data-ar="التوفر بالصيدلية">Availability</span>
+      <span class="info-val" data-en="Limited — specialty compounding or hospital supply" data-ar="محدود — تحضير خاص أو توريد مستشفيات">Limited — hospital / specialty supply</span>
+    </div>
+    <div class="warning">
+      <span>⚠️</span>
+      <span data-en="Not recommended for children under 6 years or patients with alcohol sensitivity" data-ar="لا يُنصح به للأطفال دون 6 سنوات أو مرضى الحساسية من الكحول">Not recommended for children under 6 yrs or alcohol-sensitive patients</span>
+    </div>
+  </div></div>
+</div>
+```
+
+  </div>
+
+  <!-- ══ SYRUP SCREEN ══ -->
+
+  <div class="screen" id="screen-syrup">
+    <div class="hero-card hero-syrup" data-formula="C₁₃H₁₈O₂">
+      <span class="hero-emoji">🍶</span>
+      <div class="hero-name" style="color:var(--syrup)" data-en="Ibuprofen Oral Suspension" data-ar="إيبوبروفين معلّق فموي">Ibuprofen Oral Suspension</div>
+      <div class="hero-sub" data-en="Aqueous suspension · Alcohol-free · Pediatric" data-ar="معلّق مائي · خالٍ من الكحول · للأطفال">Aqueous suspension · Alcohol-free · Pediatric</div>
+    </div>
+
+```
+<!-- Physical -->
+<div class="accordion open">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">🔬</span>
+    <span class="acc-title" data-en="Physical Properties" data-ar="الخصائص الفيزيائية">Physical Properties</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Appearance" data-ar="المظهر">Appearance</span>
+      <span class="info-val" data-en="Opaque suspension — white to off-white; shake before use" data-ar="معلّق معتم — أبيض إلى مائل للبياض؛ يُرجّ قبل الاستخدام">Opaque — white; shake before use</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Solvent System" data-ar="نظام المذيب">Solvent System</span>
+      <span class="info-val" data-en="Aqueous — purified water; completely alcohol-free" data-ar="مائي — ماء مُنقّى؛ خالٍ تماماً من الكحول">Aqueous — purified water; alcohol-free</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Viscosity" data-ar="اللزوجة">Viscosity</span>
+      <span class="info-val" data-en="Higher — thickening agents added for suspension stability" data-ar="أعلى — يُضاف مُثخِّنات لثبات المعلّق">Higher — thickeners added for stability</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="pH Range" data-ar="نطاق الحموضة">pH Range</span>
+      <span class="info-val">3.5 – 6.0</span>
+    </div>
+  </div></div>
+</div>
+
+<!-- Excipients -->
+<div class="accordion">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">🧴</span>
+    <span class="acc-title" data-en="Excipients (Inactive Ingredients)" data-ar="السواغات (المكوّنات غير الفعّالة)">Excipients</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Sweetener" data-ar="المحلّي">Sweetener</span>
+      <div class="badges">
+        <span class="badge badge-s" data-en="Sucrose" data-ar="سكروز">Sucrose</span>
+        <span class="badge badge-s" data-en="Sucralose" data-ar="سوكرالوز">Sucralose</span>
+        <span class="badge badge-s" data-en="Sorbitol" data-ar="سوربيتول">Sorbitol</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Preservative" data-ar="المادة الحافظة">Preservative</span>
+      <div class="badges">
+        <span class="badge badge-s" data-en="Sodium Benzoate" data-ar="بنزوات الصوديوم">Sodium Benzoate</span>
+        <span class="badge badge-s" data-en="Methylparaben" data-ar="ميثيل باراهيدروكسي بنزوات">Methylparaben</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Suspending Agent" data-ar="عامل التعليق">Suspending Agent</span>
+      <div class="badges">
+        <span class="badge badge-s" data-en="Xanthan Gum" data-ar="صمغ الزانثان">Xanthan Gum</span>
+        <span class="badge badge-s" data-en="Microcrystalline Cellulose" data-ar="سليلوز دقيق بلوري">MCC</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Buffer" data-ar="المنظّم">Buffer</span>
+      <div class="badges">
+        <span class="badge badge-s" data-en="Citric Acid" data-ar="حمض الستريك">Citric Acid</span>
+        <span class="badge badge-s" data-en="Sodium Citrate" data-ar="سيترات الصوديوم">Sodium Citrate</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Flavoring" data-ar="النكهة">Flavoring</span>
+      <span class="info-val" data-en="Strawberry / orange / berry (pediatric-oriented)" data-ar="فراولة / برتقال / توت (موجّه للأطفال)">Strawberry / orange / berry</span>
+    </div>
+  </div></div>
+</div>
+
+<!-- Mechanism -->
+<div class="accordion">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">⚡</span>
+    <span class="acc-title" data-en="Mechanism of Action" data-ar="آلية التأثير">Mechanism of Action</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Primary Target" data-ar="الهدف الأساسي">Primary Target</span>
+      <span class="info-val" data-en="Non-selective inhibition of COX-1 and COX-2 (identical to elixir)" data-ar="تثبيط غير انتقائي لإنزيمَي COX-1 وCOX-2 (مطابق للإكسير)">Non-selective COX-1 &amp; COX-2 inhibition</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Result" data-ar="النتيجة">Result</span>
+      <span class="info-val" data-en="↓ Prostaglandin synthesis → analgesic, antipyretic, anti-inflammatory" data-ar="↓ تخليق البروستاغلاندينات → مسكّن للألم، خافض للحرارة، مضاد للالتهاب">↓ Prostaglandins → analgesic, antipyretic, anti-inflammatory</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Onset Speed" data-ar="سرعة البداية">Onset</span>
+      <span class="info-val" data-en="Slightly slower — no alcohol; viscosity may delay gastric emptying" data-ar="أبطأ قليلاً — لا كحول؛ اللزوجة قد تُعيق إفراغ المعدة">Slightly slower — viscosity delays gastric emptying</span>
+    </div>
+  </div></div>
+</div>
+
+<!-- PK -->
+<div class="accordion">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">📈</span>
+    <span class="acc-title" data-en="Pharmacokinetics" data-ar="الحركية الدوائية">Pharmacokinetics</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Bioavailability (F)" data-ar="التوافر البيولوجي (F)">Bioavailability</span>
+      <span class="info-val" data-en="~80% — comparable after complete absorption" data-ar="~80% — مماثل بعد الامتصاص الكامل">~80% (comparable to elixir)</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Tmax" data-ar="زمن ذروة التركيز">Tmax</span>
+      <span class="info-val" data-en="~45 – 90 minutes (slower than elixir)" data-ar="~45 – 90 دقيقة (أبطأ من الإكسير)">~45 – 90 min</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Protein Binding" data-ar="الارتباط بالبروتين">Protein Binding</span>
+      <span class="info-val" data-en="99% (primarily albumin)" data-ar="99% (أساساً بالألبومين)">99% — albumin</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Metabolism" data-ar="الاستقلاب">Metabolism</span>
+      <span class="info-val" data-en="Hepatic — CYP2C9 (major), CYP2C8 (minor)" data-ar="كبدي — CYP2C9 (رئيسي)، CYP2C8 (ثانوي)">Hepatic — CYP2C9 / CYP2C8</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Half-life (t½)" data-ar="عمر النصف (t½)">t½</span>
+      <span class="info-val">1.8 – 2.0 h</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Elimination" data-ar="الإطراح">Elimination</span>
+      <span class="info-val" data-en="Renal 90% (as metabolites); fecal ~10%" data-ar="كلوي 90% (كمستقلبات)؛ برازي ~10%">Renal 90% / fecal ~10%</span>
+    </div>
+  </div></div>
+</div>
+
+<!-- Storage -->
+<div class="accordion">
+  <div class="acc-header" onclick="toggleAcc(this)">
+    <span class="acc-icon">🌡️</span>
+    <span class="acc-title" data-en="Storage, Shelf Life &amp; Availability" data-ar="التخزين وعمر الرف والتوفر">Storage &amp; Shelf Life</span>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body"><div class="acc-content">
+    <div class="info-row">
+      <span class="info-lbl" data-en="Temperature" data-ar="درجة الحرارة">Temperature</span>
+      <span class="info-val" data-en="15 – 25 °C; do NOT refrigerate — may alter suspension homogeneity" data-ar="15 – 25 °م؛ لا يُبرَّد — قد يُغيّر تجانس المعلّق">15–25 °C; do NOT refrigerate</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Shelf Life (sealed)" data-ar="عمر الرف (مغلق)">Shelf Life</span>
+      <span class="info-val" data-en="2 years (sealed)" data-ar="سنتان (محكم الإغلاق)">2 years (sealed)</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="After Opening" data-ar="بعد الفتح">After Opening</span>
+      <span class="info-val" data-en="6 months maximum — discard if color or odor changes" data-ar="6 أشهر كحد أقصى — يُتخلَّص منه إذا تغيّر اللون أو الرائحة">6 months max — discard if changed</span>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Prescription" data-ar="الوصفة الطبية">Prescription</span>
+      <div class="badges">
+        <span class="badge badge-otc" data-en="OTC — No prescription needed (pediatric doses)" data-ar="OTC — بلا وصفة طبية (جرعات الأطفال)">OTC</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-lbl" data-en="Availability" data-ar="التوفر">Availability</span>
+      <span class="info-val" data-en="Widely available — standard OTC pediatric product" data-ar="متاح على نطاق واسع — منتج OTC قياسي للأطفال">Widely available in pharmacies</span>
+    </div>
+  </div></div>
+</div>
+```
+
+  </div>
+
+  <!-- ══ COMPARE SCREEN ══ -->
+
+  <div class="screen" id="screen-compare">
+    <div class="hero-card hero-compare" data-formula="vs">
+      <span class="hero-emoji">⚖️</span>
+      <div class="hero-name" style="color:var(--compare)" data-en="Elixir vs. Oral Suspension" data-ar="الإكسير مقابل المعلّق الفموي">Elixir vs. Oral Suspension</div>
+      <div class="hero-sub" data-en="Ibuprofen C₁₃H₁₈O₂ — Direct Comparison" data-ar="إيبوبروفين C₁₃H₁₈O₂ — مقارنة مباشرة">Ibuprofen C₁₃H₁₈O₂ — Direct Comparison</div>
+    </div>
+
+```
+<!-- PK Chart -->
+<div class="pk-wrap">
+  <div class="pk-title" data-en="📈 Plasma Concentration vs. Time" data-ar="📈 تركيز البلازما مقابل الزمن">📈 Plasma Concentration vs. Time</div>
+  <svg class="pk-chart" viewBox="0 0 340 100" preserveAspectRatio="none">
+    <line x1="30" y1="8" x2="30" y2="82" stroke="#30363d" stroke-width="1.2"/>
+    <line x1="30" y1="82" x2="330" y2="82" stroke="#30363d" stroke-width="1.2"/>
+    <text x="5" y="48" fill="#8b949e" font-size="7" font-family="monospace" text-anchor="middle" transform="rotate(-90,10,48)" data-en="Conc." data-ar="تركيز">Conc.</text>
+    <text x="182" y="96" fill="#8b949e" font-size="7" font-family="monospace" text-anchor="middle" data-en="Time (h)" data-ar="زمن (س)">Time (h)</text>
+    <text x="30"  y="90" fill="#484f58" font-size="6" font-family="monospace" text-anchor="middle">0</text>
+    <text x="105" y="90" fill="#484f58" font-size="6" font-family="monospace" text-anchor="middle">1h</text>
+    <text x="180" y="90" fill="#484f58" font-size="6" font-family="monospace" text-anchor="middle">2h</text>
+    <text x="255" y="90" fill="#484f58" font-size="6" font-family="monospace" text-anchor="middle">3h</text>
+    <text x="325" y="90" fill="#484f58" font-size="6" font-family="monospace" text-anchor="middle">4h</text>
+    <path d="M30,80 C55,78 78,18 100,12 C122,6 140,28 160,46 C195,65 250,75 330,79" fill="none" stroke="#f78166" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M30,80 C60,78 95,50 135,18 C158,8 175,16 195,34 C225,56 275,73 330,78" fill="none" stroke="#79c0ff" stroke-width="2.2" stroke-linecap="round"/>
+    <line x1="100" y1="12" x2="100" y2="82" stroke="#f78166" stroke-width="1" stroke-dasharray="3,2" opacity="0.4"/>
+    <line x1="155" y1="8"  x2="155" y2="82" stroke="#79c0ff" stroke-width="1" stroke-dasharray="3,2" opacity="0.4"/>
+    <text x="88"  y="9"  fill="#f78166" font-size="6" font-family="monospace" data-en="~45m" data-ar="~45د">~45m</text>
+    <text x="142" y="6"  fill="#79c0ff" font-size="6" font-family="monospace" data-en="~75m" data-ar="~75د">~75m</text>
+  </svg>
+  <div class="pk-legend">
+    <div class="pk-leg-item"><div class="pk-leg-dot" style="background:var(--elixir)"></div><span style="color:var(--elixir)" data-en="Elixir" data-ar="إكسير">Elixir</span></div>
+    <div class="pk-leg-item"><div class="pk-leg-dot" style="background:var(--syrup)"></div><span style="color:var(--syrup)" data-en="Oral Suspension" data-ar="معلّق فموي">Oral Suspension</span></div>
+  </div>
+</div>
+
+<!-- Compare rows -->
+<div id="cmp-rows">
+  <!-- rows injected by JS for bilingual support -->
+</div>
+```
+
+  </div>
+
+</div>
+
+<!-- BOTTOM TABS -->
+
+<div id="tabs">
+  <div class="tab-indicator" id="tab-indicator" style="background:var(--elixir);left:0"></div>
+  <button class="tab tab-elixir active" onclick="showScreen('elixir',0)">
+    <span class="tab-icon">🧪</span>
+    <span class="tab-label" data-en="Elixir" data-ar="إكسير">Elixir</span>
+  </button>
+  <button class="tab tab-syrup" onclick="showScreen('syrup',1)">
+    <span class="tab-icon">🍶</span>
+    <span class="tab-label" data-en="Syrup" data-ar="شراب">Syrup</span>
+  </button>
+  <button class="tab tab-compare" onclick="showScreen('compare',2)">
+    <span class="tab-icon">⚖️</span>
+    <span class="tab-label" data-en="Compare" data-ar="مقارنة">Compare</span>
+  </button>
+</div>
+
+<script>
+// ── COMPARISON DATA ──
+const cmpData = [
+  {
+    param:   { en: "Formulation Type",       ar: "نوع التركيبة" },
+    elixir:  { en: "True solution (homogeneous)", ar: "محلول حقيقي (متجانس)" },
+    syrup:   { en: "Suspension — shake before use", ar: "معلّق — يُرجّ قبل الاستخدام" }
+  },
+  {
+    param:   { en: "Solvent",               ar: "المذيب" },
+    elixir:  { en: "Hydroalcoholic (ethanol 20–25%)", ar: "هيدروكحولي (إيثانول 20–25%)" },
+    syrup:   { en: "Aqueous — alcohol-free", ar: "مائي — خالٍ من الكحول" }
+  },
+  {
+    param:   { en: "Key Preservative",      ar: "المادة الحافظة الرئيسية" },
+    elixir:  { en: "Ethanol (self-preserving)", ar: "الإيثانول (ذاتي الحفظ)" },
+    syrup:   { en: "Sodium benzoate / methylparaben", ar: "بنزوات الصوديوم / ميثيل باراهيدروكسي بنزوات" }
+  },
+  {
+    param:   { en: "Tmax",                  ar: "زمن ذروة التركيز" },
+    elixir:  { en: "~30–60 min (faster)", ar: "~30–60 دقيقة (أسرع)" },
+    syrup:   { en: "~45–90 min (slower)", ar: "~45–90 دقيقة (أبطأ)" }
+  },
+  {
+    param:   { en: "COX Inhibition",        ar: "تثبيط COX" },
+    elixir:  { en: "COX-1 & COX-2 (non-selective)", ar: "COX-1 وCOX-2 (غير انتقائي)" },
+    syrup:   { en: "COX-1 & COX-2 (identical)", ar: "COX-1 وCOX-2 (مطابق)" }
+  },
+  {
+    param:   { en: "Shelf Life (sealed)",   ar: "عمر الرف (مغلق)" },
+    elixir:  { en: "2–3 years", ar: "2–3 سنوات" },
+    syrup:   { en: "2 years",   ar: "سنتان" }
+  },
+  {
+    param:   { en: "After Opening",         ar: "بعد الفتح" },
+    elixir:  { en: "Up to 12 months",  ar: "حتى 12 شهراً" },
+    syrup:   { en: "6 months max",     ar: "6 أشهر كحد أقصى" }
+  },
+  {
+    param:   { en: "Storage",              ar: "التخزين" },
+    elixir:  { en: "15–25 °C; protect from light", ar: "15–25 °م؛ بعيداً عن الضوء" },
+    syrup:   { en: "15–25 °C; do NOT refrigerate", ar: "15–25 °م؛ لا يُبرَّد" }
+  },
+  {
+    param:   { en: "Prescription",         ar: "الوصفة الطبية" },
+    elixir:  { en: "POM — prescription required", ar: "POM — تستلزم وصفة طبية" },
+    syrup:   { en: "OTC — no prescription (pediatric)", ar: "OTC — بلا وصفة (جرعات الأطفال)" }
+  },
+  {
+    param:   { en: "Pharmacy Availability", ar: "التوفر بالصيدلية" },
+    elixir:  { en: "Limited — hospital/specialty", ar: "محدود — مستشفيات / متخصص" },
+    syrup:   { en: "Widely available — OTC", ar: "متاح على نطاق واسع — OTC" }
+  },
+  {
+    param:   { en: "Pediatric Use",        ar: "الاستخدام لدى الأطفال" },
+    elixir:  { en: "Caution — ethanol, not under 6 yrs", ar: "بحذر — كحول، لا يُعطى دون 6 سنوات" },
+    syrup:   { en: "First choice — alcohol-free, palatable", ar: "الخيار الأول — خالٍ من الكحول، مقبول" }
+  }
+];
+
+let lang = 'en';
+
+function buildCmpRows() {
+  const container = document.getElementById('cmp-rows');
+  container.innerHTML = cmpData.map(row => `
+    <div class="cmp-row">
+      <div class="cmp-param">${row.param[lang]}</div>
+      <div class="cmp-cells">
+        <div class="cmp-cell cell-e">
+          <div class="cmp-cell-hdr">${lang==='en'?'🧪 Elixir':'🧪 الإكسير'}</div>
+          ${row.elixir[lang]}
+        </div>
+        <div class="cmp-cell cell-s">
+          <div class="cmp-cell-hdr">${lang==='en'?'🍶 Suspension':'🍶 المعلّق'}</div>
+          ${row.syrup[lang]}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── LANGUAGE ──
+function setLang(l) {
+  lang = l;
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-ar').classList.toggle('active', l==='ar');
+  document.body.classList.toggle('rtl', l==='ar');
+  document.documentElement.setAttribute('lang', l);
+  document.documentElement.setAttribute('dir', l==='ar'?'rtl':'ltr');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = el.getAttribute('data-'+l);
+  });
+  buildCmpRows();
+}
+
+// ── TABS ──
+const colors = ['var(--elixir)', 'var(--syrup)', 'var(--compare)'];
+const positions = ['0', '33.33%', '66.66%'];
+
+function showScreen(name, idx) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  const ind = document.getElementById('tab-indicator');
+  ind.style.background = colors[idx];
+  ind.style.left = positions[idx];
+}
+
+// ── ACCORDION ──
+function toggleAcc(header) {
+  const acc = header.closest('.accordion');
+  acc.classList.toggle('open');
+}
+
+// ── INIT ──
+buildCmpRows();
+</script>
+
+</body>
+</html>
